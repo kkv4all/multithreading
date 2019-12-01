@@ -8,23 +8,30 @@ class Worker {
 	private Random random = new Random();
 	private List<Integer> listOne = new ArrayList<Integer>();
 	private List<Integer> listTwo = new ArrayList<Integer>();
+	
+	private Object lockForOne = new Object();
+	private Object lockForTwo = new Object();
 
 	public synchronized void stageOne() {
-		try {
-			Thread.sleep(1);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		synchronized (lockForOne) {
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			listOne.add(random.nextInt(100));
 		}
-		listOne.add(random.nextInt(100));
 	}
 
-	public synchronized void stageTwo() {
-		try {
-			Thread.sleep(1);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+	public void stageTwo() {
+		synchronized (lockForTwo) {
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			listTwo.add(random.nextInt(100));
 		}
-		listTwo.add(random.nextInt(100));
 	}
 
 	public void process() {
